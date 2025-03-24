@@ -19,18 +19,25 @@ namespace PNMO20250324S14.AppWebMVC.Controllers
         }
 
         // GET: Clientes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Cliente cliente)
         {
-            return View(await _context.Clientes.ToListAsync());
+            
+            
+                var query = _context.Clientes.AsQueryable();
+                if (!string.IsNullOrWhiteSpace(cliente.Nombre))
+                    query = query.Where(s => s.Nombre.Contains(cliente.Nombre));
+                if (!string.IsNullOrWhiteSpace(cliente.Telefono))
+                    query = query.Where(s => s.Telefono.Contains(cliente.Telefono));
+                return View(await query.ToListAsync());
+
+            
+            
         }
 
         // GET: Clientes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            
 
             var cliente = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.Id == id);
